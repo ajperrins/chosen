@@ -11,6 +11,9 @@ $.fn.extend({
     return this if $.browser.msie and ($.browser.version is "6.0" or  $.browser.version is "7.0")
     this.each((input_field) ->
       $this = $ this
+      if $this.hasClass("chzn-done") and options?
+        c = $this.data('chosen')
+        c.search_field_disabled(options.disabled)
       $this.data('chosen', new Chosen(this, options)) unless $this.hasClass "chzn-done"
     )
 })
@@ -93,8 +96,12 @@ class Chosen extends AbstractChosen
     else
       @container.click (evt) => evt.preventDefault() # gobble click of anchor
 
-  search_field_disabled: ->
-    @is_disabled = @form_field_jq[0].disabled
+  search_field_disabled: (disable) ->
+    if disable?
+      @is_disabled = disable
+    else
+      @is_disabled = @form_field_jq[0].disabled
+
     if(@is_disabled)
       @container.addClass 'chzn-disabled'
       @search_field[0].disabled = true
